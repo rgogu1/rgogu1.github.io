@@ -4,6 +4,10 @@ function el(tag, className) {
   return node;
 }
 
+function clamp(n, a, b) {
+  return Math.max(a, Math.min(b, n));
+}
+
 function safeUrl(url) {
   if (!url) return null;
   try {
@@ -238,6 +242,34 @@ function enableMenu() {
   });
 }
 
+function enableSpyNav() {
+  const links = Array.from(document.querySelectorAll('[data-spy^="#"]'));
+  if (!links.length) return;
+
+  const targets = links
+    .map((a) => document.querySelector(a.getAttribute("data-spy")))
+    .filter(Boolean);
+  if (!targets.length) return;
+
+  const setActive = (id) => {
+    for (const a of links) {
+      const on = a.getAttribute("data-spy") === `#${id}`;
+      a.classList.toggle("is-active", on);
+    }
+  };
+
+  const io = new IntersectionObserver(
+    (entries) => {
+      const visible = entries.filter((e) => e.isIntersecting).sort((a, b) => b.intersectionRatio - a.intersectionRatio);
+      const top = visible[0]?.target;
+      if (top?.id) setActive(top.id);
+    },
+    { root: null, threshold: [0.14, 0.22, 0.34, 0.5] }
+  );
+
+  for (const t of targets) io.observe(t);
+}
+
 function enableReveal() {
   const nodes = Array.from(document.querySelectorAll(".reveal"));
   if (!nodes.length) return;
@@ -279,6 +311,7 @@ function enableCopyEmail(email) {
 
 function enableScrollProgress() {
   const bar = document.getElementById("scrollProgress");
+  const rail = document.getElementById("railMeter");
   if (!bar) return;
 
   let ticking = false;
@@ -288,6 +321,7 @@ function enableScrollProgress() {
     const max = Math.max(1, doc.scrollHeight - window.innerHeight);
     const p = Math.min(1, Math.max(0, window.scrollY / max));
     bar.style.width = `${Math.round(p * 1000) / 10}%`;
+    if (rail) rail.style.height = `${Math.round(p * 1000) / 10}%`;
   }
 
   function onScroll() {
@@ -463,10 +497,470 @@ function enableCommandPalette(getItems) {
   });
 }
 
+function setText(id, text, fallback = "") {
+  const el = document.getElementById(id);
+  if (el) el.textContent = text || fallback;
+}
+
+function renderPrinciples(container, principles) {
+  if (!container) return;
+  const list = Array.isArray(principles) && principles.length ? principles : null;
+  if (!list) return;
+  container.innerHTML = "";
+  for (const p of list) {
+    const li = document.createElement("li");
+    li.textContent = p;
+    container.appendChild(li);
+  }
+}
+
+function renderCaseStudies(listEl, detailEl, cases) {
+  if (!listEl || !detailEl) return;
+  const items = Array.isArray(cases) ? cases : [];
+  listEl.innerHTML = "";
+
+  function select(id) {
+    const c = items.find((x) => x.id === id) || items[0];
+    if (!c) return;
+
+    for (const a of Array.from(listEl.querySelectorAll("a"))) {
+      a.classList.toggle("is-active", a.getAttribute("data-id") === c.id);
+    }
+
+    detailEl.innerHTML = "";
+
+    const head = el("div", "caseHead");
+    const title = el("div", "caseHead__title");
+    title.textContent = c.title || "";
+    const sub = el("div", "caseHead__sub");
+    sub.textContent = c.subtitle || "";
+    const ctx = el("p", "caseHead__ctx");
+    ctx.textContent = c.context || "";
+    head.append(title, sub, ctx);
+
+    const tags = el("div", "caseTags");
+    for (const t of c.tags || []) {
+      const chip = el("span", "tag");
+      chip.textContent = t;
+      tags.appendChild(chip);
+    }
+
+    const body = el("div", "caseBody");
+    for (const s of c.sections || []) {
+      const card = el("section", "caseCard reveal");
+      const kicker = el("div", "caseCard__kicker");
+      kicker.textContent = s.kicker || "";
+      const st = el("div", "caseCard__title");
+      st.textContent = s.title || "";
+      const p = el("div", "caseCard__body");
+      p.textContent = s.body || "";
+      card.append(kicker, st, p);
+      body.appendChild(card);
+    }
+
+    detailEl.append(head);
+    if (tags.childElementCount) detailEl.appendChild(tags);
+    detailEl.appendChild(body);
+    enableReveal();
+  }
+
+  if (!items.length) {
+    listEl.innerHTML = `<div class="cases__note">Add items to <code>content.json</code> → <code>caseStudies</code>.</div>`;
+    return;
+  }
+
+  for (const c of items) {
+    const a = document.createElement("a");
+    a.className = "caseLink";
+    a.href = `#case-studies`;
+    a.setAttribute("data-id", c.id);
+
+    const t = el("div", "caseLink__title");
+    t.textContent = c.title || "";
+    const s = el("div", "caseLink__sub");
+    s.textContent = c.subtitle || "";
+    const meta = el("div", "caseLink__meta");
+    meta.textContent = (c.tags || []).slice(0, 3).join(" · ");
+    a.append(t, s, meta);
+
+    a.addEventListener("click", (e) => {
+      e.preventDefault();
+      select(c.id);
+    });
+
+    listEl.appendChild(a);
+  }
+
+  select(items[0].id);
+}
+
+function hashTo01(str) {
+  let h = 2166136261;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return ((h >>> 0) % 10000) / 10000;
+}
+
+function categorizeSkill(s) {
+  const v = String(s || "").toLowerCase();
+  if (v.includes("certified") || v.includes("certification")) return "certifications";
+  if (v.includes("kubernetes") || v.includes("openshift") || v.includes("docker") || v.includes("helm")) return "containers";
+  if (v.includes("terraform") || v.includes("cloudformation") || v.includes("iac") || v.includes("ansible") || v.includes("chef"))
+    return "automation";
+  if (v.includes("azure") || v.includes("aws") || v.includes("gcp")) return "cloud";
+  if (v.includes("cicd") || v.includes("ci/cd") || v.includes("jenkins") || v.includes("github") || v.includes("gitlab") || v.includes("azure devops"))
+    return "delivery";
+  if (v.includes("vault") || v.includes("secrets") || v.includes("security") || v.includes("scan")) return "security";
+  if (v.includes("python") || v.includes("java") || v.includes("bash") || v.includes("powershell")) return "languages";
+  if (v.includes("linux")) return "systems";
+  return "other";
+}
+
+function categoryLabel(key) {
+  const map = {
+    cloud: "Cloud",
+    containers: "Containers",
+    delivery: "Delivery",
+    automation: "Automation",
+    security: "Security",
+    systems: "Systems",
+    languages: "Languages",
+    certifications: "Certifications",
+    other: "Other"
+  };
+  return map[key] || key;
+}
+
+function buildAtlas(skills) {
+  const categories = new Map();
+  for (const s of skills || []) {
+    const key = categorizeSkill(s);
+    if (!categories.has(key)) categories.set(key, []);
+    categories.get(key).push(String(s));
+  }
+  const keys = Array.from(categories.keys()).sort((a, b) => categoryLabel(a).localeCompare(categoryLabel(b)));
+  return { keys, categories };
+}
+
+function createAtlasController(canvas, tooltipEl, atlas, state) {
+  const ctx = canvas.getContext("2d");
+  if (!ctx) return { resize: () => {}, render: () => {} };
+
+  let w = 0;
+  let h = 0;
+  let nodes = [];
+  let catNodes = [];
+
+  const palette = {
+    cloud: "#7aa2ff",
+    containers: "#3ae6c7",
+    delivery: "#ff4d6d",
+    automation: "#ffd166",
+    security: "#a78bfa",
+    systems: "#94a3b8",
+    languages: "#60a5fa",
+    certifications: "#f59e0b",
+    other: "#cbd5e1"
+  };
+
+  const bg = () => {
+    const t = document.documentElement.getAttribute("data-theme");
+    return t === "dark" ? "rgba(8,10,16,0.15)" : "rgba(255,255,255,0.18)";
+  };
+
+  function computeLayout() {
+    const dpr = Math.max(1, Math.min(2, window.devicePixelRatio || 1));
+    const rect = canvas.getBoundingClientRect();
+    w = Math.max(320, Math.floor(rect.width));
+    h = Math.max(320, Math.floor(rect.height));
+    canvas.width = Math.floor(w * dpr);
+    canvas.height = Math.floor(h * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+
+    const center = { x: w / 2, y: h / 2 };
+    const radius = Math.min(w, h) * 0.34;
+    const keyCount = Math.max(1, atlas.keys.length);
+
+    nodes = [];
+    catNodes = atlas.keys.map((k, i) => {
+      const a = (i / keyCount) * Math.PI * 2 - Math.PI / 2;
+      const x = center.x + Math.cos(a) * radius;
+      const y = center.y + Math.sin(a) * radius;
+      return { type: "cat", key: k, label: categoryLabel(k), x, y, r: 14 };
+    });
+
+    for (const c of catNodes) nodes.push(c);
+    for (const k of atlas.keys) {
+      const list = atlas.categories.get(k) || [];
+      const cat = catNodes.find((n) => n.key === k);
+      const local = Math.max(1, list.length);
+      for (const [idx, s] of list.entries()) {
+        const t = (idx / local) * Math.PI * 2;
+        const r = 44 + (hashTo01(`${s}:${state.seed}`) * 1.0) * 74;
+        const jitter = (hashTo01(`${state.seed}:${idx}:${s}`) - 0.5) * 10;
+        const x = cat.x + Math.cos(t) * r + jitter;
+        const y = cat.y + Math.sin(t) * r - jitter;
+        nodes.push({ type: "skill", key: k, label: s, x, y, r: 5.2 });
+      }
+    }
+  }
+
+  function render() {
+    if (!w || !h) computeLayout();
+    ctx.clearRect(0, 0, w, h);
+    ctx.fillStyle = bg();
+    ctx.fillRect(0, 0, w, h);
+
+    const activeKey = state.activeCategory;
+    const activeSkill = state.activeSkill;
+
+    ctx.lineWidth = 1;
+    for (const n of nodes) {
+      if (n.type !== "skill") continue;
+      const cat = catNodes.find((c) => c.key === n.key);
+      const dim = activeKey && n.key !== activeKey;
+      ctx.strokeStyle = dim ? "rgba(148,163,184,0.16)" : "rgba(148,163,184,0.24)";
+      ctx.beginPath();
+      ctx.moveTo(cat.x, cat.y);
+      ctx.lineTo(n.x, n.y);
+      ctx.stroke();
+    }
+
+    for (const n of nodes) {
+      const color = palette[n.key] || palette.other;
+      const dim = activeKey && n.key !== activeKey;
+      const isActiveSkill = activeSkill && n.type === "skill" && n.label === activeSkill;
+
+      if (n.type === "cat") {
+        ctx.fillStyle = dim ? "rgba(148,163,184,0.25)" : color;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, n.r, 0, Math.PI * 2);
+        ctx.fill();
+
+        ctx.fillStyle = dim ? "rgba(148,163,184,0.6)" : "rgba(245,246,250,0.92)";
+        if (document.documentElement.getAttribute("data-theme") !== "dark") ctx.fillStyle = dim ? "rgba(20,20,20,0.58)" : "rgba(20,20,20,0.86)";
+        ctx.font = "700 12px ui-monospace, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New', monospace";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(n.label.toUpperCase(), n.x, n.y - 22);
+        continue;
+      }
+
+      ctx.fillStyle = dim ? "rgba(148,163,184,0.32)" : color;
+      const rr = isActiveSkill ? n.r * 1.7 : n.r;
+      ctx.beginPath();
+      ctx.arc(n.x, n.y, rr, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  }
+
+  function hitTest(x, y) {
+    let best = null;
+    for (const n of nodes) {
+      const dx = n.x - x;
+      const dy = n.y - y;
+      const d = Math.sqrt(dx * dx + dy * dy);
+      const r = n.type === "cat" ? n.r + 6 : n.r + 7;
+      if (d <= r) {
+        best = n;
+        if (n.type === "skill") break;
+      }
+    }
+    return best;
+  }
+
+  function setTooltip(text, x, y) {
+    if (!tooltipEl) return;
+    if (!text) {
+      tooltipEl.hidden = true;
+      return;
+    }
+    tooltipEl.textContent = text;
+    tooltipEl.style.left = `${Math.round(x)}px`;
+    tooltipEl.style.top = `${Math.round(y)}px`;
+    tooltipEl.hidden = false;
+  }
+
+  function attach() {
+    function pos(ev) {
+      const r = canvas.getBoundingClientRect();
+      return { x: ev.clientX - r.left, y: ev.clientY - r.top };
+    }
+
+    canvas.addEventListener("mousemove", (ev) => {
+      const p = pos(ev);
+      const hit = hitTest(p.x, p.y);
+      canvas.style.cursor = hit ? "pointer" : "default";
+      if (!hit) return setTooltip("", 0, 0);
+      const label = hit.type === "cat" ? `${hit.label}` : `${hit.label}`;
+      setTooltip(label, p.x + 12, p.y + 10);
+    });
+
+    canvas.addEventListener("mouseleave", () => setTooltip("", 0, 0));
+
+    canvas.addEventListener("click", (ev) => {
+      const p = pos(ev);
+      const hit = hitTest(p.x, p.y);
+      if (!hit) return;
+      if (hit.type === "cat") {
+        state.activeCategory = state.activeCategory === hit.key ? "" : hit.key;
+        state.activeSkill = "";
+        state.onChange?.();
+        render();
+      } else if (hit.type === "skill") {
+        state.activeCategory = hit.key;
+        state.activeSkill = hit.label;
+        state.onChange?.();
+        render();
+      }
+    });
+  }
+
+  attach();
+  computeLayout();
+  render();
+
+  return {
+    resize() {
+      computeLayout();
+      render();
+    },
+    render() {
+      render();
+    }
+  };
+}
+
+function renderAtlasSidebar({ atlas, state, content }) {
+  const filtersEl = document.getElementById("atlasFilters");
+  const resultsEl = document.getElementById("atlasResults");
+  const searchEl = document.getElementById("atlasSearch");
+  if (!filtersEl || !resultsEl || !searchEl) return;
+
+  const experience = content.experience || [];
+
+  function setActiveCategory(key) {
+    state.activeCategory = key;
+    state.activeSkill = "";
+    state.onChange?.();
+    update();
+  }
+
+  filtersEl.innerHTML = "";
+  const allBtn = document.createElement("button");
+  allBtn.className = "filter";
+  allBtn.type = "button";
+  allBtn.textContent = "All";
+  allBtn.addEventListener("click", () => setActiveCategory(""));
+  filtersEl.appendChild(allBtn);
+
+  for (const k of atlas.keys) {
+    const b = document.createElement("button");
+    b.className = "filter";
+    b.type = "button";
+    b.textContent = categoryLabel(k);
+    b.addEventListener("click", () => setActiveCategory(state.activeCategory === k ? "" : k));
+    filtersEl.appendChild(b);
+  }
+
+  function matchesExperience(skill) {
+    const out = [];
+    const q = String(skill).toLowerCase();
+    for (const r of experience) {
+      const lines = (r.details || []).filter((d) => String(d).toLowerCase().includes(q));
+      if (lines.length) out.push({ role: `${r.company} — ${r.title}`, lines });
+    }
+    return out;
+  }
+
+  function update() {
+    const q = String(searchEl.value || "").trim().toLowerCase();
+    const active = state.activeCategory;
+
+    for (const b of Array.from(filtersEl.querySelectorAll(".filter"))) {
+      const t = b.textContent;
+      const on = (t === "All" && !active) || (t !== "All" && categoryLabel(active) === t);
+      b.classList.toggle("is-active", on);
+    }
+    allBtn.classList.toggle("is-active", !active);
+
+    const allSkills = [];
+    for (const k of atlas.keys) {
+      if (active && k !== active) continue;
+      for (const s of atlas.categories.get(k) || []) allSkills.push({ key: k, label: s });
+    }
+
+    const filtered = !q ? allSkills : allSkills.filter((x) => x.label.toLowerCase().includes(q));
+
+    resultsEl.innerHTML = "";
+
+    if (!filtered.length) {
+      resultsEl.innerHTML = `<div class="atlas__empty">No matches.</div>`;
+      return;
+    }
+
+    for (const item of filtered.slice(0, 42)) {
+      const row = el("div", "atlasRow");
+      const left = el("div", "atlasRow__left");
+      const title = el("div", "atlasRow__title");
+      title.textContent = item.label;
+      const meta = el("div", "atlasRow__meta");
+      meta.textContent = categoryLabel(item.key);
+      left.append(title, meta);
+
+      const btn = document.createElement("button");
+      btn.className = "atlasRow__btn";
+      btn.type = "button";
+      btn.textContent = "Show";
+      btn.addEventListener("click", () => {
+        state.activeCategory = item.key;
+        state.activeSkill = item.label;
+        state.onChange?.();
+        update();
+      });
+
+      row.append(left, btn);
+
+      if (state.activeSkill === item.label) {
+        const hits = matchesExperience(item.label);
+        const panel = el("div", "atlasRow__panel");
+        if (!hits.length) panel.textContent = "No direct mentions in experience bullets (add specifics in content.json).";
+        else {
+          for (const h of hits.slice(0, 3)) {
+            const r = el("div", "atlasHit");
+            const rt = el("div", "atlasHit__role");
+            rt.textContent = h.role;
+            const ul = document.createElement("ul");
+            ul.className = "atlasHit__list";
+            for (const ln of h.lines.slice(0, 2)) {
+              const li = document.createElement("li");
+              li.textContent = ln;
+              ul.appendChild(li);
+            }
+            r.append(rt, ul);
+            panel.appendChild(r);
+          }
+        }
+        row.appendChild(panel);
+      }
+
+      resultsEl.appendChild(row);
+    }
+  }
+
+  searchEl.addEventListener("input", update);
+  update();
+
+  return { update };
+}
+
 async function main() {
   enableMenu();
   enableScrollProgress();
   enableThemeToggle();
+  enableSpyNav();
 
   const res = await fetch("content.json", { cache: "no-store" });
   const content = await res.json();
@@ -486,32 +980,33 @@ async function main() {
   const brandMark = document.getElementById("brandMark");
   if (brandMark) brandMark.textContent = initials || "GRK";
 
-  document.getElementById("navName").textContent = hero.name || "Portfolio";
-  document.getElementById("heroName").textContent = hero.name || "Your Name";
-  document.getElementById("heroRole").textContent = hero.role || "Role";
-  document.getElementById("heroMeta").textContent = hero.location || "";
-  document.getElementById("heroTagline").textContent = hero.tagline || "";
-  document.getElementById("availabilityBadge").textContent = hero.availability || "";
+  setText("navName", hero.name, "Portfolio");
+  setText("heroName", hero.name, "Your Name");
+  setText("heroRole", hero.role, "Role");
+  setText("heroMeta", hero.location, "");
+  setText("heroTagline", hero.tagline, "");
+  setText("availabilityBadge", hero.availability, "");
 
   const primaryCta = document.getElementById("primaryCta");
-  primaryCta.textContent = hero.primaryCta?.label || "View Projects";
-  primaryCta.href = hero.primaryCta?.href || "#projects";
+  primaryCta.textContent = hero.primaryCta?.label || "Read Case Studies";
+  primaryCta.href = hero.primaryCta?.href || "#case-studies";
 
   const secondaryCta = document.getElementById("secondaryCta");
   secondaryCta.textContent = hero.secondaryCta?.label || "Contact";
   secondaryCta.href = hero.secondaryCta?.href || "#contact";
 
-  document.getElementById("posterSig").textContent = hero.name || "Your Name";
-  document.getElementById("footerName").textContent = hero.name || "Your Name";
-  document.getElementById("footerRole").textContent = hero.role || "Role";
+  setText("posterSig", hero.name, "Your Name");
+  setText("footerName", hero.name, "Your Name");
+  setText("footerRole", hero.role, "Role");
 
   renderLinks(document.getElementById("heroLinks"), content.links || {});
   renderStats(document.getElementById("statsRow"), content.stats || []);
   renderHighlights(document.getElementById("highlightsGrid"), content.highlights || []);
-  renderProjects(document.getElementById("projectsGrid"), content.projects || []);
   renderExperience(document.getElementById("experienceTimeline"), content.experience || []);
   renderEducation(document.getElementById("educationTimeline"), content.education || []);
   renderSkills(document.getElementById("skillsGrid"), content.skills || []);
+  renderPrinciples(document.getElementById("principlesList"), content.principles || []);
+  renderCaseStudies(document.getElementById("caseList"), document.getElementById("caseDetail"), content.caseStudies || []);
 
   const email = content.links?.email || "";
   const emailLink = document.getElementById("emailLink");
@@ -549,12 +1044,13 @@ async function main() {
   document.getElementById("footerNote").textContent = content.footerNote || "";
 
   const sectionCommands = () => [
-    { title: "Top", meta: "Section", href: "#top", hint: "Hero" },
-    { title: "Projects", meta: "Section", href: "#projects", hint: "Work" },
-    { title: "Experience", meta: "Section", href: "#experience", hint: "Roles" },
-    { title: "Education", meta: "Section", href: "#education", hint: "Academic" },
-    { title: "Skills", meta: "Section", href: "#skills", hint: "Toolbox" },
-    { title: "Contact", meta: "Section", href: "#contact", hint: "Reach out" }
+    { title: "Intro", meta: "Chapter", href: "#top", hint: "01" },
+    { title: "Atlas", meta: "Chapter", href: "#map", hint: "02" },
+    { title: "Case Studies", meta: "Chapter", href: "#case-studies", hint: "03" },
+    { title: "Experience", meta: "Chapter", href: "#experience", hint: "04" },
+    { title: "Education", meta: "Chapter", href: "#education", hint: "05" },
+    { title: "Skills", meta: "Chapter", href: "#skills", hint: "06" },
+    { title: "Contact", meta: "Chapter", href: "#contact", hint: "07" }
   ];
 
   const linkCommands = () => {
@@ -580,7 +1076,58 @@ async function main() {
     return out;
   };
 
-  enableCommandPalette(() => [...sectionCommands(), ...linkCommands(), ...projectCommands()]);
+  const caseCommands = () => {
+    const out = [];
+    for (const c of content.caseStudies || []) {
+      out.push({ title: c.title || "Case study", meta: "Case Study", href: "#case-studies", hint: (c.tags || []).slice(0, 3).join(" · ") });
+    }
+    return out;
+  };
+
+  enableCommandPalette(() => [...sectionCommands(), ...linkCommands(), ...caseCommands(), ...projectCommands()]);
+
+  const canvas = document.getElementById("atlasCanvas");
+  const tooltip = document.getElementById("atlasTooltip");
+  const shuffleBtn = document.getElementById("atlasShuffleBtn");
+  const resetBtn = document.getElementById("atlasResetBtn");
+  if (canvas) {
+    const atlas = buildAtlas(content.skills || []);
+    const state = { seed: Math.round(Math.random() * 1e9), activeCategory: "", activeSkill: "", onChange: null };
+    const sidebar = renderAtlasSidebar({
+      atlas,
+      state,
+      content
+    });
+
+    const controller = createAtlasController(canvas, tooltip, atlas, state);
+
+    state.onChange = () => {
+      sidebar?.update?.();
+      controller.render();
+    };
+
+    window.addEventListener("resize", () => controller.resize());
+
+    if (shuffleBtn) {
+      shuffleBtn.addEventListener("click", () => {
+        state.seed = Math.round(Math.random() * 1e9);
+        controller.resize();
+        sidebar?.update?.();
+      });
+    }
+
+    if (resetBtn) {
+      resetBtn.addEventListener("click", () => {
+        state.activeCategory = "";
+        state.activeSkill = "";
+        const s = document.getElementById("atlasSearch");
+        if (s) s.value = "";
+        controller.render();
+        sidebar?.update?.();
+      });
+    }
+  }
+
   enableCopyEmail(email);
   enableReveal();
 }

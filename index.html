@@ -13,8 +13,8 @@
     <meta property="og:image" content="assets/og.svg" />
 
     <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
-    <link rel="preload" href="styles.css?v=0e21ee3" as="style" />
-    <link rel="stylesheet" href="styles.css?v=0e21ee3" />
+    <link rel="preload" href="styles.css" as="style" />
+    <link rel="stylesheet" href="styles.css" />
   </head>
   <body>
     <a class="skip" href="#main">Skip to content</a>
@@ -26,17 +26,17 @@
       <div class="bg__grid"></div>
     </div>
 
-    <header class="top">
+    <header class="top" id="topBar">
       <nav class="nav" aria-label="Primary">
         <a class="brand" href="#top" aria-label="Home">
           <span class="brand__mark" id="brandMark" aria-hidden="true">GRK</span>
           <span class="brand__name" id="navName">Portfolio</span>
         </a>
         <div class="nav__right">
-          <div class="nav__links">
-            <a href="#projects">Projects</a>
+          <div class="nav__links" aria-label="Chapters">
+            <a href="#map">Atlas</a>
+            <a href="#case-studies">Case Studies</a>
             <a href="#experience">Experience</a>
-            <a href="#education">Education</a>
             <a href="#skills">Skills</a>
             <a href="#contact" class="pill">Contact</a>
           </div>
@@ -53,7 +53,7 @@
               </svg>
             </button>
             <button class="nav__menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel">
-              Menu
+              Chapters
             </button>
           </div>
         </div>
@@ -63,134 +63,204 @@
       </div>
 
       <div class="menu" id="menuPanel" hidden>
-        <a href="#projects">Projects</a>
+        <a href="#map">Atlas</a>
+        <a href="#case-studies">Case Studies</a>
         <a href="#experience">Experience</a>
-        <a href="#education">Education</a>
         <a href="#skills">Skills</a>
         <a href="#contact">Contact</a>
       </div>
     </header>
 
-    <main id="main" class="main">
-      <section class="hero" id="top">
-        <div class="hero__content">
-          <div class="hero__badge" id="availabilityBadge">Open to opportunities</div>
-          <h1 class="hero__title">
-            <span class="hero__name" id="heroName">Your Name</span>
-            <span class="hero__role" id="heroRole">Role</span>
-          </h1>
-          <p class="hero__meta" id="heroMeta">Location</p>
-          <p class="hero__tagline" id="heroTagline">A short, specific tagline.</p>
-          <div class="hero__cta">
-            <a class="btn btn--primary" id="primaryCta" href="#projects">View Projects</a>
-            <a class="btn btn--ghost" id="secondaryCta" href="#contact">Contact</a>
-          </div>
-          <div class="hero__links" id="heroLinks" aria-label="Links"></div>
-          <div class="stats" id="statsRow" aria-label="Quick stats"></div>
-        </div>
-        <div class="hero__card">
-          <div class="card">
-            <div class="card__top">
-              <div class="card__dot"></div>
-              <div class="card__dot"></div>
-              <div class="card__dot"></div>
-              <div class="card__label">Now</div>
+    <div class="layout">
+      <aside class="rail" aria-label="Chapter navigation">
+        <div class="rail__inner">
+          <div class="rail__kicker">Chapters</div>
+          <nav class="rail__nav" id="railNav">
+            <a href="#top" data-spy="#top">01 Intro</a>
+            <a href="#map" data-spy="#map">02 Atlas</a>
+            <a href="#case-studies" data-spy="#case-studies">03 Case Studies</a>
+            <a href="#experience" data-spy="#experience">04 Experience</a>
+            <a href="#skills" data-spy="#skills">05 Skills</a>
+            <a href="#contact" data-spy="#contact">06 Contact</a>
+          </nav>
+          <div class="rail__meta">
+            <div class="rail__meter" aria-hidden="true">
+              <div class="rail__meterBar" id="railMeter"></div>
             </div>
-            <div class="card__body">
-              <div class="card__kicker">Currently</div>
-              <div class="card__headline" id="nowHeadline">Building and shipping.</div>
-              <div class="card__sub" id="nowSub">Focused on performance, reliability, and great UX.</div>
-              <div class="card__chips" id="nowChips">
-                <span class="chip">Web</span>
-                <span class="chip">Systems</span>
-                <span class="chip">DX</span>
+            <div class="rail__hint">Tip: Press <span class="kbd">⌘</span><span class="kbd">K</span> to search.</div>
+          </div>
+        </div>
+      </aside>
+
+      <main id="main" class="main">
+        <section class="chapter hero" id="top" data-title="Intro">
+          <div class="hero__grid">
+            <div class="hero__content">
+              <div class="hero__badge" id="availabilityBadge">Open to opportunities</div>
+              <h1 class="hero__title">
+                <span class="hero__name" id="heroName">Your Name</span>
+                <span class="hero__role" id="heroRole">Role</span>
+              </h1>
+              <p class="hero__meta" id="heroMeta">Location</p>
+              <p class="hero__tagline" id="heroTagline">A short, specific tagline.</p>
+              <div class="hero__cta">
+                <a class="btn btn--primary" id="primaryCta" href="#case-studies">Read Case Studies</a>
+                <a class="btn btn--ghost" id="secondaryCta" href="#contact">Contact</a>
+              </div>
+              <div class="hero__links" id="heroLinks" aria-label="Links"></div>
+              <div class="stats" id="statsRow" aria-label="Quick stats"></div>
+            </div>
+
+            <div class="hero__panel">
+              <article class="panel" aria-label="Profile snapshot">
+                <div class="panel__head">
+                  <div class="panel__dots" aria-hidden="true">
+                    <span></span><span></span><span></span>
+                  </div>
+                  <div class="panel__label">Operating Principles</div>
+                </div>
+                <div class="panel__body">
+                  <ol class="principles" id="principlesList" aria-label="Principles">
+                    <li>Reduce toil. Automate the path, not the exception.</li>
+                    <li>Make failure visible. Build observability as a feature.</li>
+                    <li>Ship safely. Small batches, guardrails, repeatability.</li>
+                  </ol>
+                  <div class="hero__hint">Everything here is driven by <code>content.json</code>.</div>
+                </div>
+              </article>
+
+              <div class="miniStrip" id="highlights" aria-label="Highlights">
+                <div class="miniStrip__grid" id="highlightsGrid"></div>
               </div>
             </div>
           </div>
-          <div class="hero__hint">Tip: edit `content.json` to customize everything.</div>
-        </div>
-      </section>
+        </section>
 
-      <section class="strip" id="highlights" aria-label="Highlights">
-        <div class="strip__grid" id="highlightsGrid"></div>
-      </section>
-
-      <section class="section" id="projects">
-        <div class="section__head">
-          <h2>Projects</h2>
-          <p>Selected work with clear outcomes and clean implementation.</p>
-        </div>
-        <div class="cards" id="projectsGrid"></div>
-      </section>
-
-      <section class="section" id="experience">
-        <div class="section__head">
-          <h2>Experience</h2>
-          <p>Roles where I shipped and improved real systems.</p>
-        </div>
-        <div class="timeline" id="experienceTimeline"></div>
-      </section>
-
-      <section class="section" id="education">
-        <div class="section__head">
-          <h2>Education</h2>
-          <p>Academic background and credentials.</p>
-        </div>
-        <div class="timeline" id="educationTimeline"></div>
-      </section>
-
-      <section class="section" id="skills">
-        <div class="section__head">
-          <h2>Skills</h2>
-          <p>Tools I reach for to build reliable products.</p>
-        </div>
-        <div class="skills" id="skillsGrid"></div>
-      </section>
-
-      <section class="section section--contact" id="contact">
-        <div class="section__head">
-          <h2>Contact</h2>
-          <p>Best way to reach me is email. I respond quickly.</p>
-        </div>
-        <div class="contact">
-          <div class="contact__card">
-            <div class="contact__row">
-              <div class="contact__label">Email</div>
-              <a class="contact__value" id="emailLink" href="mailto:you@example.com">you@example.com</a>
+        <section class="chapter chapter--atlas" id="map" data-title="Atlas">
+          <header class="chapter__head">
+            <div>
+              <h2>Work Atlas</h2>
+              <p>A quick, explorable map of the tools and platforms I ship with.</p>
             </div>
-            <div class="contact__row">
-              <div class="contact__label">LinkedIn</div>
-              <a class="contact__value" id="linkedinLink" href="#" rel="noreferrer">Add your URL</a>
+            <div class="chapter__actions">
+              <button class="btn btn--ghost btn--small" id="atlasShuffleBtn" type="button">Shuffle</button>
+              <button class="btn btn--ghost btn--small" id="atlasResetBtn" type="button">Reset</button>
             </div>
-            <div class="contact__row">
-              <div class="contact__label">GitHub</div>
-              <a class="contact__value" id="githubLink" href="#" rel="noreferrer">Add your URL</a>
+          </header>
+          <div class="atlas">
+            <div class="atlas__viz">
+              <canvas id="atlasCanvas" class="atlas__canvas" role="img" aria-label="Interactive skills constellation"></canvas>
+              <div class="atlas__tooltip" id="atlasTooltip" role="status" aria-live="polite" hidden></div>
             </div>
-            <div class="contact__row">
-              <div class="contact__label">Resume</div>
-              <a class="contact__value" id="resumeLink" href="#" rel="noreferrer">assets/resume.pdf</a>
-            </div>
-            <div class="contact__actions">
-              <a class="btn btn--primary" id="emailCta" href="mailto:you@example.com">Email Me</a>
-              <button class="btn btn--ghost" id="copyEmailBtn" type="button">Copy Email</button>
-            </div>
-            <p class="contact__note" id="footerNote"></p>
-          </div>
-          <div class="contact__aside">
-            <div class="poster">
-              <div class="poster__title">Build Notes</div>
-              <ul class="poster__list">
-                <li>Static, no build tools</li>
-                <li>Content-driven via JSON</li>
-                <li>Accessible and responsive</li>
-                <li>Lightweight animations</li>
-              </ul>
-              <div class="poster__sig" id="posterSig">Your Name</div>
+            <div class="atlas__side">
+              <div class="atlas__card">
+                <div class="atlas__title">Explore</div>
+                <p class="atlas__copy">Filter by category, search, and jump to related experience bullets.</p>
+                <div class="atlas__controls">
+                  <input class="field" id="atlasSearch" type="search" autocomplete="off" placeholder="Search skills…" />
+                  <div class="filters" id="atlasFilters" aria-label="Filters"></div>
+                </div>
+              </div>
+              <div class="atlas__results" id="atlasResults" aria-label="Results"></div>
             </div>
           </div>
-        </div>
-      </section>
-    </main>
+        </section>
+
+        <section class="chapter" id="case-studies" data-title="Case Studies">
+          <header class="chapter__head">
+            <div>
+              <h2>Case Studies</h2>
+              <p>Short write-ups that explain decisions, tradeoffs, and how I ship.</p>
+            </div>
+          </header>
+          <div class="cases">
+            <div class="cases__list" id="caseList" aria-label="Case studies list"></div>
+            <article class="cases__detail" id="caseDetail" aria-label="Case study detail">
+              <div class="cases__empty">
+                Select a case study to see the full story.
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <section class="chapter" id="experience" data-title="Experience">
+          <header class="chapter__head">
+            <div>
+              <h2>Experience</h2>
+              <p>Roles where I shipped and improved production systems.</p>
+            </div>
+          </header>
+          <div class="timeline" id="experienceTimeline"></div>
+        </section>
+
+        <section class="chapter" id="education" data-title="Education">
+          <header class="chapter__head">
+            <div>
+              <h2>Education</h2>
+              <p>Academic background and credentials.</p>
+            </div>
+          </header>
+          <div class="timeline" id="educationTimeline"></div>
+        </section>
+
+        <section class="chapter" id="skills" data-title="Skills">
+          <header class="chapter__head">
+            <div>
+              <h2>Skills</h2>
+              <p>Strongest tools, platforms, and methods I use to deliver reliably.</p>
+            </div>
+          </header>
+          <div class="skills" id="skillsGrid"></div>
+        </section>
+
+        <section class="chapter chapter--contact" id="contact" data-title="Contact">
+          <header class="chapter__head">
+            <div>
+              <h2>Contact</h2>
+              <p>Best way to reach me is email.</p>
+            </div>
+          </header>
+          <div class="contact">
+            <div class="contact__card">
+              <div class="contact__row">
+                <div class="contact__label">Email</div>
+                <a class="contact__value" id="emailLink" href="mailto:you@example.com">you@example.com</a>
+              </div>
+              <div class="contact__row">
+                <div class="contact__label">LinkedIn</div>
+                <a class="contact__value" id="linkedinLink" href="#" rel="noreferrer">Add your URL</a>
+              </div>
+              <div class="contact__row">
+                <div class="contact__label">GitHub</div>
+                <a class="contact__value" id="githubLink" href="#" rel="noreferrer">Add your URL</a>
+              </div>
+              <div class="contact__row">
+                <div class="contact__label">Resume</div>
+                <a class="contact__value" id="resumeLink" href="#" rel="noreferrer">assets/resume.pdf</a>
+              </div>
+              <div class="contact__actions">
+                <a class="btn btn--primary" id="emailCta" href="mailto:you@example.com">Email Me</a>
+                <button class="btn btn--ghost" id="copyEmailBtn" type="button">Copy Email</button>
+              </div>
+              <p class="contact__note" id="footerNote"></p>
+            </div>
+
+            <div class="contact__aside">
+              <div class="poster">
+                <div class="poster__title">Build Notes</div>
+                <ul class="poster__list">
+                  <li>Static, no build tools</li>
+                  <li>Story + explore pattern</li>
+                  <li>Keyboard-driven navigation</li>
+                  <li>Accessible and responsive</li>
+                </ul>
+                <div class="poster__sig" id="posterSig">Your Name</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+    </div>
 
     <footer class="footer">
       <div class="footer__inner">
@@ -227,6 +297,13 @@
       </div>
     </div>
 
-    <script type="module" src="app.js?v=0e21ee3"></script>
+    <noscript>
+      <div class="noscript">
+        This site uses a small amount of JavaScript to load content and power the atlas. If you prefer no JS, you can still
+        use the sections and contact links above.
+      </div>
+    </noscript>
+
+    <script type="module" src="app.js"></script>
   </body>
 </html>

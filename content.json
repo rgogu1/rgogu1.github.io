@@ -31,6 +31,37 @@
     { "kicker": "Strength", "title": "Containers & Cloud", "body": "Docker, Kubernetes/OpenShift, and cloud-native architectures on AWS/Azure." },
     { "kicker": "Style", "title": "Reliable Systems", "body": "Security, observability, and operational simplicity built into the workflow." }
   ],
+  "principles": [
+    "Reduce toil. Automate the path, not the exception.",
+    "Make failure visible. Build observability as a feature.",
+    "Ship safely. Small batches, guardrails, repeatability."
+  ],
+  "caseStudies": [
+    {
+      "id": "delivery-platform",
+      "title": "Delivery Platform: guardrails over heroics",
+      "subtitle": "How I approach CI/CD, consistency, and safe releases.",
+      "context": "Modern systems move fast when the defaults are safe. This case study is a template you can customize with specifics (repo links, metrics, diagrams).",
+      "sections": [
+        { "kicker": "Problem", "title": "Inconsistent pipelines", "body": "Teams ship with different templates, quality gates, and deployment practices, increasing risk and slowing down change." },
+        { "kicker": "Approach", "title": "Standardize the happy path", "body": "Build reusable pipeline patterns and enforce guardrails (testing, scanning, approvals) while keeping escape hatches for special cases." },
+        { "kicker": "Result", "title": "Predictable releases", "body": "Fewer surprises, easier onboarding, and clearer ownership boundaries. Add your concrete impact metrics here." }
+      ],
+      "tags": ["CI/CD", "Guardrails", "DevEx"]
+    },
+    {
+      "id": "containers-at-scale",
+      "title": "Containers at scale: reliability by design",
+      "subtitle": "Practical Kubernetes/OpenShift operations and delivery.",
+      "context": "A template for writing about platform upgrades, resilience patterns, and day-2 operations improvements.",
+      "sections": [
+        { "kicker": "Problem", "title": "Fragile deployments", "body": "Builds and releases work… until they don’t. Failures are hard to debug and slow to recover from." },
+        { "kicker": "Approach", "title": "Observability + automation", "body": "Bake in logging/metrics, automate rollbacks, and use repeatable IaC patterns to remove drift." },
+        { "kicker": "Result", "title": "Operational clarity", "body": "Cleaner runbooks, faster triage, and less toil. Add your concrete incident or latency story here." }
+      ],
+      "tags": ["Kubernetes", "OpenShift", "Reliability"]
+    }
+  ],
   "skills": [
     "Microsoft Certified: DevOps Engineer Expert",
     "Microsoft Certified: Azure Developer Associate",
