@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <title>Portfolio</title>
     <meta name="description" content="Personal portfolio." />
 
@@ -32,17 +32,35 @@
           <span class="brand__mark" id="brandMark" aria-hidden="true">GRK</span>
           <span class="brand__name" id="navName">Portfolio</span>
         </a>
-        <div class="nav__links">
-          <a href="#projects">Projects</a>
-          <a href="#experience">Experience</a>
-          <a href="#education">Education</a>
-          <a href="#skills">Skills</a>
-          <a href="#contact" class="pill">Contact</a>
+        <div class="nav__right">
+          <div class="nav__links">
+            <a href="#projects">Projects</a>
+            <a href="#experience">Experience</a>
+            <a href="#education">Education</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact" class="pill">Contact</a>
+          </div>
+          <div class="nav__actions" aria-label="Quick actions">
+            <button class="nav__icon" id="cmdkBtn" type="button" aria-haspopup="dialog" aria-controls="palette">
+              <span class="nav__iconText">⌘K</span>
+              <span class="nav__sr">Open command palette</span>
+            </button>
+            <button class="nav__icon" id="themeBtn" type="button" aria-label="Toggle theme">
+              <svg class="nav__svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm0-16.5a1 1 0 0 1 1 1V4a1 1 0 1 1-2 0V2.5a1 1 0 0 1 1-1ZM12 20a1 1 0 0 1 1 1v.5a1 1 0 1 1-2 0V21a1 1 0 0 1 1-1Zm9.5-8a1 1 0 0 1-1 1H20a1 1 0 1 1 0-2h.5a1 1 0 0 1 1 1ZM4 12a1 1 0 0 1-1 1H2.5a1 1 0 1 1 0-2H3a1 1 0 0 1 1 1Zm15.66-7.16a1 1 0 0 1 0 1.41l-.36.36a1 1 0 1 1-1.41-1.41l.36-.36a1 1 0 0 1 1.41 0ZM6.11 18.39a1 1 0 0 1 0 1.41l-.36.36a1 1 0 1 1-1.41-1.41l.36-.36a1 1 0 0 1 1.41 0Zm13.19 1.77a1 1 0 0 1-1.41 0l-.36-.36a1 1 0 1 1 1.41-1.41l.36.36a1 1 0 0 1 0 1.41ZM6.47 5.61a1 1 0 0 1-1.41 0l-.36-.36A1 1 0 0 1 6.11 3.84l.36.36a1 1 0 0 1 0 1.41Z"
+                />
+              </svg>
+            </button>
+            <button class="nav__menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel">
+              Menu
+            </button>
+          </div>
         </div>
-        <button class="nav__menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel">
-          Menu
-        </button>
       </nav>
+      <div class="progress" aria-hidden="true">
+        <div class="progress__bar" id="scrollProgress"></div>
+      </div>
 
       <div class="menu" id="menuPanel" hidden>
         <a href="#projects">Projects</a>
@@ -186,6 +204,28 @@
         </div>
       </div>
     </footer>
+
+    <div class="palette" id="palette" hidden>
+      <div class="palette__backdrop" id="paletteBackdrop" aria-hidden="true"></div>
+      <div class="palette__panel" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
+        <div class="palette__head">
+          <div class="palette__title" id="paletteTitle">Command Palette</div>
+          <div class="palette__hint">
+            <span class="kbd">Esc</span> to close · <span class="kbd">↑</span><span class="kbd">↓</span> to navigate ·
+            <span class="kbd">Enter</span> to open
+          </div>
+        </div>
+        <input
+          class="palette__input"
+          id="paletteInput"
+          type="search"
+          inputmode="search"
+          autocomplete="off"
+          placeholder="Search sections and links…"
+        />
+        <div class="palette__list" id="paletteList" role="listbox" aria-label="Results"></div>
+      </div>
+    </div>
 
     <script type="module" src="app.js"></script>
   </body>

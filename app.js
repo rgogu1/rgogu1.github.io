@@ -277,8 +277,196 @@ function enableCopyEmail(email) {
   });
 }
 
+function enableScrollProgress() {
+  const bar = document.getElementById("scrollProgress");
+  if (!bar) return;
+
+  let ticking = false;
+  function update() {
+    ticking = false;
+    const doc = document.documentElement;
+    const max = Math.max(1, doc.scrollHeight - window.innerHeight);
+    const p = Math.min(1, Math.max(0, window.scrollY / max));
+    bar.style.width = `${Math.round(p * 1000) / 10}%`;
+  }
+
+  function onScroll() {
+    if (ticking) return;
+    ticking = true;
+    window.requestAnimationFrame(update);
+  }
+
+  window.addEventListener("scroll", onScroll, { passive: true });
+  window.addEventListener("resize", onScroll);
+  update();
+}
+
+function enableThemeToggle() {
+  const storageKey = "portfolio.theme";
+  const btn = document.getElementById("themeBtn");
+  if (!btn) return;
+
+  const media = window.matchMedia?.("(prefers-color-scheme: dark)");
+  const systemTheme = () => (media && media.matches ? "dark" : "light");
+  const getSaved = () => {
+    const v = String(window.localStorage.getItem(storageKey) || "");
+    return v === "light" || v === "dark" || v === "system" ? v : "system";
+  };
+
+  let mode = getSaved();
+
+  function apply(next) {
+    mode = next;
+    if (mode === "system") document.documentElement.removeAttribute("data-theme");
+    else document.documentElement.setAttribute("data-theme", mode);
+    window.localStorage.setItem(storageKey, mode);
+    const resolved = mode === "system" ? systemTheme() : mode;
+    btn.setAttribute("aria-label", `Theme: ${resolved}. Click to change.`);
+  }
+
+  function cycle() {
+    if (mode === "system") return apply(systemTheme() === "dark" ? "light" : "dark");
+    if (mode === "dark") return apply("light");
+    return apply("system");
+  }
+
+  btn.addEventListener("click", cycle);
+  window.addEventListener("keydown", (e) => {
+    if ((e.key || "").toLowerCase() === "t" && (e.metaKey || e.ctrlKey)) cycle();
+  });
+
+  if (media && typeof media.addEventListener === "function") {
+    media.addEventListener("change", () => {
+      if (mode === "system") apply("system");
+    });
+  }
+
+  apply(mode);
+}
+
+function enableCommandPalette(getItems) {
+  const palette = document.getElementById("palette");
+  const backdrop = document.getElementById("paletteBackdrop");
+  const input = document.getElementById("paletteInput");
+  const list = document.getElementById("paletteList");
+  const openBtn = document.getElementById("cmdkBtn");
+  if (!palette || !backdrop || !input || !list) return;
+
+  let items = [];
+  let filtered = [];
+  let selectedIndex = 0;
+
+  function isOpen() {
+    return !palette.hidden;
+  }
+
+  function setSelected(i) {
+    selectedIndex = Math.max(0, Math.min(filtered.length - 1, i));
+    const nodes = Array.from(list.querySelectorAll(".palette__item"));
+    nodes.forEach((n, idx) => n.setAttribute("aria-selected", idx === selectedIndex ? "true" : "false"));
+    const active = nodes[selectedIndex];
+    if (active) active.scrollIntoView({ block: "nearest" });
+  }
+
+  function render() {
+    list.innerHTML = "";
+    for (const [idx, it] of filtered.entries()) {
+      const a = document.createElement("a");
+      a.className = "palette__item";
+      a.href = it.href || "#";
+      a.rel = it.href && it.href.startsWith("http") ? "noreferrer" : "";
+      a.setAttribute("role", "option");
+      a.setAttribute("aria-selected", idx === selectedIndex ? "true" : "false");
+
+      const main = el("div", "palette__itemMain");
+      const title = el("div", "palette__itemTitle");
+      title.textContent = it.title || "";
+      const meta = el("div", "palette__itemMeta");
+      meta.textContent = it.meta || "";
+      main.append(title);
+      if (it.meta) main.append(meta);
+
+      const hint = el("div", "palette__itemMeta");
+      hint.textContent = it.hint || "";
+
+      a.append(main, hint);
+      a.addEventListener("click", () => close());
+      a.addEventListener("mousemove", () => setSelected(idx));
+      list.appendChild(a);
+    }
+  }
+
+  function applyFilter() {
+    const q = String(input.value || "").trim().toLowerCase();
+    filtered = !q
+      ? items.slice()
+      : items.filter((it) => {
+          const hay = `${it.title || ""} ${it.meta || ""} ${it.hint || ""} ${it.href || ""}`.toLowerCase();
+          return hay.includes(q);
+        });
+    selectedIndex = 0;
+    render();
+    setSelected(0);
+  }
+
+  function open() {
+    if (isOpen()) return;
+    palette.hidden = false;
+    items = (typeof getItems === "function" ? getItems() : []) || [];
+    applyFilter();
+    setTimeout(() => input.focus(), 0);
+  }
+
+  function close() {
+    if (!isOpen()) return;
+    palette.hidden = true;
+    input.value = "";
+  }
+
+  function openSelected() {
+    const it = filtered[selectedIndex];
+    if (!it || !it.href) return;
+    window.location.href = it.href;
+    close();
+  }
+
+  if (openBtn) openBtn.addEventListener("click", open);
+  backdrop.addEventListener("click", close);
+  input.addEventListener("input", applyFilter);
+
+  window.addEventListener("keydown", (e) => {
+    const key = (e.key || "").toLowerCase();
+    const inField = /^(input|textarea|select)$/i.test(document.activeElement?.tagName || "");
+
+    if ((e.metaKey || e.ctrlKey) && key === "k") {
+      e.preventDefault();
+      open();
+      return;
+    }
+
+    if (!isOpen()) return;
+    if (key === "escape") return close();
+
+    if (key === "arrowdown") {
+      e.preventDefault();
+      return setSelected(selectedIndex + 1);
+    }
+    if (key === "arrowup") {
+      e.preventDefault();
+      return setSelected(selectedIndex - 1);
+    }
+    if (key === "enter" && !inField) return openSelected();
+    if (key === "enter" && document.activeElement === input) {
+      e.preventDefault();
+      return openSelected();
+    }
+  });
+}
+
 async function main() {
   enableMenu();
+  enableScrollProgress();
+  enableThemeToggle();
 
   const res = await fetch("content.json", { cache: "no-store" });
   const content = await res.json();
@@ -360,6 +548,39 @@ async function main() {
 
   document.getElementById("footerNote").textContent = content.footerNote || "";
 
+  const sectionCommands = () => [
+    { title: "Top", meta: "Section", href: "#top", hint: "Hero" },
+    { title: "Projects", meta: "Section", href: "#projects", hint: "Work" },
+    { title: "Experience", meta: "Section", href: "#experience", hint: "Roles" },
+    { title: "Education", meta: "Section", href: "#education", hint: "Academic" },
+    { title: "Skills", meta: "Section", href: "#skills", hint: "Toolbox" },
+    { title: "Contact", meta: "Section", href: "#contact", hint: "Reach out" }
+  ];
+
+  const linkCommands = () => {
+    const out = [];
+    const email = content.links?.email ? `mailto:${content.links.email}` : null;
+    const github = safeUrl(content.links?.github);
+    const linkedin = safeUrl(content.links?.linkedin);
+    const resume = content.links?.resume || null;
+    if (email) out.push({ title: "Email", meta: "Link", href: email, hint: content.links.email });
+    if (github) out.push({ title: "GitHub", meta: "Link", href: github, hint: "github.com" });
+    if (linkedin) out.push({ title: "LinkedIn", meta: "Link", href: linkedin, hint: "linkedin.com" });
+    if (resume) out.push({ title: "Resume", meta: "Link", href: resume, hint: "PDF" });
+    return out;
+  };
+
+  const projectCommands = () => {
+    const out = [];
+    for (const p of content.projects || []) {
+      const href = safeUrl(p?.links?.[0]?.href);
+      if (!href) continue;
+      out.push({ title: p.name || "Project", meta: "Project", href, hint: (p.tags || []).slice(0, 3).join(" · ") });
+    }
+    return out;
+  };
+
+  enableCommandPalette(() => [...sectionCommands(), ...linkCommands(), ...projectCommands()]);
   enableCopyEmail(email);
   enableReveal();
 }
