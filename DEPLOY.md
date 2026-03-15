@@ -7,7 +7,7 @@ This portfolio is a static site. The most professional, simplest option is GitHu
 Target: `https://www.ramkumarg.com` (or any domain you own).
 
 1. Buy the domain from any registrar.
-2. Create a GitHub repo named `Ramgogu.github.io` (must match your username exactly).
+2. Create a GitHub repo named `<your-username>.github.io` (must match your username exactly).
 3. Put all files from this folder into the repo root:
    - `index.html`, `styles.css`, `app.js`, `content.json`, `assets/`, `.nojekyll`, `404.html`
 4. Commit and push to `main` (or `master`).
@@ -20,12 +20,11 @@ Target: `https://www.ramkumarg.com` (or any domain you own).
 
 ## Option B: Free URL (Fastest)
 
-Target: `https://ramgogu.github.io/`
+Target: `https://<your-username>.github.io/`
 
-Same steps as above, but skip the custom domain and DNS steps. Just push to the `Ramgogu.github.io` repo and GitHub will host it.
+Same steps as above, but skip the custom domain and DNS steps. Just push to the `<your-username>.github.io` repo and GitHub will host it.
 
 ## Notes
 
 - Do not share `file:///...` links on LinkedIn. Only `https://...` links work for everyone.
 - Do not rely on a local network URL (`http://192.168...`) for a public portfolio. It only works while your laptop is on and reachable.
-
