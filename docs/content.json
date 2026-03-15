@@ -1,0 +1,114 @@
+{
+  "meta": {
+    "title": "Ram Kumar Gogu | Portfolio",
+    "description": "Ram Kumar Gogu: DevOps-focused Software Engineer. Experience across Kubernetes/OpenShift, CI/CD, and AWS/Azure.",
+    "ogImage": "assets/og.svg"
+  },
+  "hero": {
+    "name": "Ram Kumar Gogu",
+    "initials": "GRK",
+    "role": "Software Engineer",
+    "location": "Scottsdale, AZ",
+    "tagline": "Senior DevOps-focused software engineer with 10+ years in automation, CI/CD, and cloud platforms (Azure/AWS).",
+    "availability": "Open for the right opportunity",
+    "primaryCta": { "label": "View Projects", "href": "#projects" },
+    "secondaryCta": { "label": "Contact", "href": "#contact" }
+  },
+  "stats": [
+    { "value": "10+ yrs", "label": "IT experience" },
+    { "value": "AWS + Azure", "label": "cloud platforms" },
+    { "value": "K8s + OpenShift", "label": "containers" },
+    { "value": "CI/CD", "label": "automation" }
+  ],
+  "links": {
+    "email": "ram.gk4991@gmail.com",
+    "github": "https://github.com/rgogu1",
+    "linkedin": "https://www.linkedin.com/in/rg-itdevops",
+    "resume": "assets/resume.pdf"
+  },
+  "highlights": [
+    { "kicker": "Focus", "title": "Platform & Automation", "body": "CI/CD, infrastructure as code, and repeatable delivery across environments." },
+    { "kicker": "Strength", "title": "Containers & Cloud", "body": "Docker, Kubernetes/OpenShift, and cloud-native architectures on AWS/Azure." },
+    { "kicker": "Style", "title": "Reliable Systems", "body": "Security, observability, and operational simplicity built into the workflow." }
+  ],
+  "skills": [
+    "Microsoft Certified: DevOps Engineer Expert",
+    "Microsoft Certified: Azure Developer Associate",
+    "CI/CD (Azure DevOps, GitHub, GitLab)",
+    "Terraform (IaC)",
+    "Docker",
+    "Kubernetes",
+    "OpenShift",
+    "AWS",
+    "Microsoft Azure",
+    "Ansible",
+    "Chef",
+    "HashiCorp Vault",
+    "Helm",
+    "APIGEE / API Gateways",
+    "Linux Administration",
+    "Python",
+    "Java"
+  ],
+  "projects": [],
+  "experience": [
+    {
+      "company": "American Express",
+      "title": "Sr. DevOps Engineer",
+      "time": "Nov 2023 – Present",
+      "details": [
+        "Implemented and optimized Docker, Kubernetes, and OpenShift environments for scalable and resilient deployments.",
+        "Integrated GEN-AI model workloads and API gateway tooling (including APIGEE / enterprise gateway integration).",
+        "Automated infrastructure and deployments with Terraform and config-management tools; improved security with secrets management and scanning."
+      ]
+    },
+    {
+      "company": "Amazon",
+      "title": "Sr. DevOps Engineer",
+      "time": "Oct 2021 – Oct 2023",
+      "details": [
+        "Architected and deployed highly available AWS solutions (EC2, ELB, Auto Scaling, S3).",
+        "Built CI/CD pipelines for .NET and Python, integrating GitHub/VSTS and artifacts; shipped serverless services with Lambda/SNS/SQS.",
+        "Implemented monitoring/logging and performance tracking across CDN/DNS and traffic patterns."
+      ]
+    },
+    {
+      "company": "FIS",
+      "title": "DevOps Engineer",
+      "time": "Aug 2019 – May 2021",
+      "details": [
+        "Developed and maintained Python automation scripts to improve operational efficiency.",
+        "Worked across Linux environments and supported Terraform-based provisioning for cloud infrastructure.",
+        "Built familiarity with GCP services (Compute Engine, Pub/Sub, Dataflow, Dataproc) and cloud operations workflows."
+      ]
+    },
+    {
+      "company": "Cipla",
+      "title": "DevOps Engineer",
+      "time": "Apr 2017 – Jul 2019",
+      "details": [
+        "Supported CI/CD pipelines with Jenkins and collaborated with teams using GitHub-based workflows.",
+        "Assisted with containerization and orchestration (Docker, Kubernetes) and basic administration of PostgreSQL/MongoDB.",
+        "Contributed to Java/J2EE applications using Spring and Hibernate; assisted with configuration management (Ansible, Chef)."
+      ]
+    },
+    {
+      "company": "Ajath Infotech Pvt Ltd.",
+      "title": "Jr. DevOps Engineer",
+      "time": "Nov 2014 – Mar 2017",
+      "details": [
+        "Automated Linux routines with Bash and supported WebLogic operations and troubleshooting.",
+        "Provisioned AWS infrastructure using CloudFormation and Terraform across VPC/compute/storage/DB/monitoring services.",
+        "Supported cloud migrations to Azure (Azure Migrate / Site Recovery) and customized build processes using PowerShell."
+      ]
+    }
+  ],
+  "education": [
+    {
+      "school": "University of Central Missouri",
+      "degree": "Master's degree",
+      "field": "Computer and Information Systems Security / Information Assurance"
+    }
+  ],
+  "footerNote": "Built as a static site. Edit content.json to customize."
+}

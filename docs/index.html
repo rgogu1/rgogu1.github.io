@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Portfolio</title>
+    <meta name="description" content="Personal portfolio." />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="Portfolio" />
+    <meta property="og:description" content="Personal portfolio." />
+    <meta property="og:image" content="assets/og.svg" />
+
+    <link rel="icon" href="assets/favicon.svg" type="image/svg+xml" />
+    <link rel="preload" href="styles.css" as="style" />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <a class="skip" href="#main">Skip to content</a>
+
+    <div class="bg" aria-hidden="true">
+      <div class="bg__grain"></div>
+      <div class="bg__orb bg__orb--one"></div>
+      <div class="bg__orb bg__orb--two"></div>
+      <div class="bg__grid"></div>
+    </div>
+
+    <header class="top">
+      <nav class="nav" aria-label="Primary">
+        <a class="brand" href="#top" aria-label="Home">
+          <span class="brand__mark" id="brandMark" aria-hidden="true">GRK</span>
+          <span class="brand__name" id="navName">Portfolio</span>
+        </a>
+        <div class="nav__right">
+          <div class="nav__links">
+            <a href="#projects">Projects</a>
+            <a href="#experience">Experience</a>
+            <a href="#education">Education</a>
+            <a href="#skills">Skills</a>
+            <a href="#contact" class="pill">Contact</a>
+          </div>
+          <div class="nav__actions" aria-label="Quick actions">
+            <button class="nav__icon" id="cmdkBtn" type="button" aria-haspopup="dialog" aria-controls="palette">
+              <span class="nav__iconText">⌘K</span>
+              <span class="nav__sr">Open command palette</span>
+            </button>
+            <button class="nav__icon" id="themeBtn" type="button" aria-label="Toggle theme">
+              <svg class="nav__svg" viewBox="0 0 24 24" aria-hidden="true">
+                <path
+                  d="M12 18a6 6 0 1 1 0-12 6 6 0 0 1 0 12Zm0-16.5a1 1 0 0 1 1 1V4a1 1 0 1 1-2 0V2.5a1 1 0 0 1 1-1ZM12 20a1 1 0 0 1 1 1v.5a1 1 0 1 1-2 0V21a1 1 0 0 1 1-1Zm9.5-8a1 1 0 0 1-1 1H20a1 1 0 1 1 0-2h.5a1 1 0 0 1 1 1ZM4 12a1 1 0 0 1-1 1H2.5a1 1 0 1 1 0-2H3a1 1 0 0 1 1 1Zm15.66-7.16a1 1 0 0 1 0 1.41l-.36.36a1 1 0 1 1-1.41-1.41l.36-.36a1 1 0 0 1 1.41 0ZM6.11 18.39a1 1 0 0 1 0 1.41l-.36.36a1 1 0 1 1-1.41-1.41l.36-.36a1 1 0 0 1 1.41 0Zm13.19 1.77a1 1 0 0 1-1.41 0l-.36-.36a1 1 0 1 1 1.41-1.41l.36.36a1 1 0 0 1 0 1.41ZM6.47 5.61a1 1 0 0 1-1.41 0l-.36-.36A1 1 0 0 1 6.11 3.84l.36.36a1 1 0 0 1 0 1.41Z"
+                />
+              </svg>
+            </button>
+            <button class="nav__menu" id="menuBtn" type="button" aria-expanded="false" aria-controls="menuPanel">
+              Menu
+            </button>
+          </div>
+        </div>
+      </nav>
+      <div class="progress" aria-hidden="true">
+        <div class="progress__bar" id="scrollProgress"></div>
+      </div>
+
+      <div class="menu" id="menuPanel" hidden>
+        <a href="#projects">Projects</a>
+        <a href="#experience">Experience</a>
+        <a href="#education">Education</a>
+        <a href="#skills">Skills</a>
+        <a href="#contact">Contact</a>
+      </div>
+    </header>
+
+    <main id="main" class="main">
+      <section class="hero" id="top">
+        <div class="hero__content">
+          <div class="hero__badge" id="availabilityBadge">Open to opportunities</div>
+          <h1 class="hero__title">
+            <span class="hero__name" id="heroName">Your Name</span>
+            <span class="hero__role" id="heroRole">Role</span>
+          </h1>
+          <p class="hero__meta" id="heroMeta">Location</p>
+          <p class="hero__tagline" id="heroTagline">A short, specific tagline.</p>
+          <div class="hero__cta">
+            <a class="btn btn--primary" id="primaryCta" href="#projects">View Projects</a>
+            <a class="btn btn--ghost" id="secondaryCta" href="#contact">Contact</a>
+          </div>
+          <div class="hero__links" id="heroLinks" aria-label="Links"></div>
+          <div class="stats" id="statsRow" aria-label="Quick stats"></div>
+        </div>
+        <div class="hero__card">
+          <div class="card">
+            <div class="card__top">
+              <div class="card__dot"></div>
+              <div class="card__dot"></div>
+              <div class="card__dot"></div>
+              <div class="card__label">Now</div>
+            </div>
+            <div class="card__body">
+              <div class="card__kicker">Currently</div>
+              <div class="card__headline" id="nowHeadline">Building and shipping.</div>
+              <div class="card__sub" id="nowSub">Focused on performance, reliability, and great UX.</div>
+              <div class="card__chips" id="nowChips">
+                <span class="chip">Web</span>
+                <span class="chip">Systems</span>
+                <span class="chip">DX</span>
+              </div>
+            </div>
+          </div>
+          <div class="hero__hint">Tip: edit `content.json` to customize everything.</div>
+        </div>
+      </section>
+
+      <section class="strip" id="highlights" aria-label="Highlights">
+        <div class="strip__grid" id="highlightsGrid"></div>
+      </section>
+
+      <section class="section" id="projects">
+        <div class="section__head">
+          <h2>Projects</h2>
+          <p>Selected work with clear outcomes and clean implementation.</p>
+        </div>
+        <div class="cards" id="projectsGrid"></div>
+      </section>
+
+      <section class="section" id="experience">
+        <div class="section__head">
+          <h2>Experience</h2>
+          <p>Roles where I shipped and improved real systems.</p>
+        </div>
+        <div class="timeline" id="experienceTimeline"></div>
+      </section>
+
+      <section class="section" id="education">
+        <div class="section__head">
+          <h2>Education</h2>
+          <p>Academic background and credentials.</p>
+        </div>
+        <div class="timeline" id="educationTimeline"></div>
+      </section>
+
+      <section class="section" id="skills">
+        <div class="section__head">
+          <h2>Skills</h2>
+          <p>Tools I reach for to build reliable products.</p>
+        </div>
+        <div class="skills" id="skillsGrid"></div>
+      </section>
+
+      <section class="section section--contact" id="contact">
+        <div class="section__head">
+          <h2>Contact</h2>
+          <p>Best way to reach me is email. I respond quickly.</p>
+        </div>
+        <div class="contact">
+          <div class="contact__card">
+            <div class="contact__row">
+              <div class="contact__label">Email</div>
+              <a class="contact__value" id="emailLink" href="mailto:you@example.com">you@example.com</a>
+            </div>
+            <div class="contact__row">
+              <div class="contact__label">LinkedIn</div>
+              <a class="contact__value" id="linkedinLink" href="#" rel="noreferrer">Add your URL</a>
+            </div>
+            <div class="contact__row">
+              <div class="contact__label">GitHub</div>
+              <a class="contact__value" id="githubLink" href="#" rel="noreferrer">Add your URL</a>
+            </div>
+            <div class="contact__row">
+              <div class="contact__label">Resume</div>
+              <a class="contact__value" id="resumeLink" href="#" rel="noreferrer">assets/resume.pdf</a>
+            </div>
+            <div class="contact__actions">
+              <a class="btn btn--primary" id="emailCta" href="mailto:you@example.com">Email Me</a>
+              <button class="btn btn--ghost" id="copyEmailBtn" type="button">Copy Email</button>
+            </div>
+            <p class="contact__note" id="footerNote"></p>
+          </div>
+          <div class="contact__aside">
+            <div class="poster">
+              <div class="poster__title">Build Notes</div>
+              <ul class="poster__list">
+                <li>Static, no build tools</li>
+                <li>Content-driven via JSON</li>
+                <li>Accessible and responsive</li>
+                <li>Lightweight animations</li>
+              </ul>
+              <div class="poster__sig" id="posterSig">Your Name</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer">
+      <div class="footer__inner">
+        <div class="footer__left">
+          <span id="footerName">Your Name</span>
+          <span class="footer__sep" aria-hidden="true">·</span>
+          <span id="footerRole">Role</span>
+        </div>
+        <div class="footer__right">
+          <a href="#top">Back to top</a>
+        </div>
+      </div>
+    </footer>
+
+    <div class="palette" id="palette" hidden>
+      <div class="palette__backdrop" id="paletteBackdrop" aria-hidden="true"></div>
+      <div class="palette__panel" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
+        <div class="palette__head">
+          <div class="palette__title" id="paletteTitle">Command Palette</div>
+          <div class="palette__hint">
+            <span class="kbd">Esc</span> to close · <span class="kbd">↑</span><span class="kbd">↓</span> to navigate ·
+            <span class="kbd">Enter</span> to open
+          </div>
+        </div>
+        <input
+          class="palette__input"
+          id="paletteInput"
+          type="search"
+          inputmode="search"
+          autocomplete="off"
+          placeholder="Search sections and links…"
+        />
+        <div class="palette__list" id="paletteList" role="listbox" aria-label="Results"></div>
+      </div>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
