@@ -71,6 +71,20 @@ function renderHighlights(container, highlights) {
   }
 }
 
+function renderStats(container, stats) {
+  if (!container) return;
+  container.innerHTML = "";
+  for (const s of stats || []) {
+    const item = el("div", "stat reveal");
+    const value = el("div", "stat__value");
+    value.textContent = s.value || "";
+    const label = el("div", "stat__label");
+    label.textContent = s.label || "";
+    item.append(value, label);
+    container.appendChild(item);
+  }
+}
+
 function renderProjects(container, projects) {
   container.innerHTML = "";
   if (!Array.isArray(projects) || projects.length === 0) {
@@ -273,6 +287,17 @@ async function main() {
   setMeta(content.meta || {});
 
   const hero = content.hero || {};
+  const initials =
+    hero.initials ||
+    String(hero.name || "")
+      .split(/\\s+/)
+      .filter(Boolean)
+      .slice(0, 3)
+      .map((p) => p[0]?.toUpperCase())
+      .join("");
+  const brandMark = document.getElementById("brandMark");
+  if (brandMark) brandMark.textContent = initials || "GRK";
+
   document.getElementById("navName").textContent = hero.name || "Portfolio";
   document.getElementById("heroName").textContent = hero.name || "Your Name";
   document.getElementById("heroRole").textContent = hero.role || "Role";
@@ -293,6 +318,7 @@ async function main() {
   document.getElementById("footerRole").textContent = hero.role || "Role";
 
   renderLinks(document.getElementById("heroLinks"), content.links || {});
+  renderStats(document.getElementById("statsRow"), content.stats || []);
   renderHighlights(document.getElementById("highlightsGrid"), content.highlights || []);
   renderProjects(document.getElementById("projectsGrid"), content.projects || []);
   renderExperience(document.getElementById("experienceTimeline"), content.experience || []);
