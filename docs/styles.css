@@ -1674,6 +1674,9 @@ a:hover {
   .layout {
     grid-template-columns: 1fr;
   }
+  .rail {
+    display: none;
+  }
   .rail__inner {
     position: static;
   }
