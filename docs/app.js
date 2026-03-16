@@ -390,6 +390,30 @@ function enableCommandPalette(getItems) {
   let filtered = [];
   let selectedIndex = 0;
 
+  function defaultCommands() {
+    const out = [
+      { title: "Intro", meta: "Chapter", href: "#top", hint: "01" },
+      { title: "Atlas", meta: "Chapter", href: "#map", hint: "02" },
+      { title: "Case Studies", meta: "Chapter", href: "#case-studies", hint: "03" },
+      { title: "Experience", meta: "Chapter", href: "#experience", hint: "04" },
+      { title: "Education", meta: "Chapter", href: "#education", hint: "05" },
+      { title: "Skills", meta: "Chapter", href: "#skills", hint: "06" },
+      { title: "Contact", meta: "Chapter", href: "#contact", hint: "07" }
+    ];
+
+    const links = window.__portfolioLinks || {};
+    const email = links?.email ? `mailto:${links.email}` : null;
+    const github = safeUrl(links?.github);
+    const linkedin = safeUrl(links?.linkedin);
+    const resume = links?.resume || null;
+    if (email) out.push({ title: "Email", meta: "Link", href: email, hint: links.email });
+    if (github) out.push({ title: "GitHub", meta: "Link", href: github, hint: "github.com" });
+    if (linkedin) out.push({ title: "LinkedIn", meta: "Link", href: linkedin, hint: "linkedin.com" });
+    if (resume) out.push({ title: "Resume", meta: "Link", href: resume, hint: "PDF" });
+
+    return out;
+  }
+
   function isOpen() {
     return !palette.hidden;
   }
@@ -454,8 +478,14 @@ function enableCommandPalette(getItems) {
   function open() {
     if (isOpen()) return;
     palette.hidden = false;
-    const next = typeof getItems === "function" ? getItems() : [];
+    let next = [];
+    try {
+      next = typeof getItems === "function" ? getItems() : [];
+    } catch {
+      next = [];
+    }
     items = Array.isArray(next) ? next.filter(Boolean) : [];
+    if (!items.length) items = defaultCommands();
     applyFilter();
     setTimeout(() => input.focus(), 0);
   }
