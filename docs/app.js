@@ -404,7 +404,14 @@ function enableCommandPalette(getItems) {
 
   function render() {
     list.innerHTML = "";
+    if (!filtered.length) {
+      const empty = el("div", "palette__empty");
+      empty.textContent = "No results. Try: atlas, contact, github, linkedin.";
+      list.appendChild(empty);
+      return;
+    }
     for (const [idx, it] of filtered.entries()) {
+      if (!it || typeof it !== "object") continue;
       const a = document.createElement("a");
       a.className = "palette__item";
       a.href = it.href || "#";
@@ -435,6 +442,7 @@ function enableCommandPalette(getItems) {
     filtered = !q
       ? items.slice()
       : items.filter((it) => {
+          if (!it || typeof it !== "object") return false;
           const hay = `${it.title || ""} ${it.meta || ""} ${it.hint || ""} ${it.href || ""}`.toLowerCase();
           return hay.includes(q);
         });
@@ -446,7 +454,8 @@ function enableCommandPalette(getItems) {
   function open() {
     if (isOpen()) return;
     palette.hidden = false;
-    items = (typeof getItems === "function" ? getItems() : []) || [];
+    const next = typeof getItems === "function" ? getItems() : [];
+    items = Array.isArray(next) ? next.filter(Boolean) : [];
     applyFilter();
     setTimeout(() => input.focus(), 0);
   }

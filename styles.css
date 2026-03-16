@@ -1034,6 +1034,21 @@ a:hover {
   gap: 8px;
 }
 
+.palette__empty {
+  border: 1px dashed rgba(21, 21, 21, 0.14);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.46);
+  padding: 14px 12px;
+  font-family: var(--mono);
+  font-size: 12px;
+  opacity: 0.8;
+}
+
+:root[data-theme="dark"] .palette__empty {
+  border-color: rgba(255, 255, 255, 0.16);
+  background: rgba(16, 22, 34, 0.56);
+}
+
 .palette__item {
   display: grid;
   grid-template-columns: 1fr auto;
