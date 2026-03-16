@@ -41,10 +41,6 @@
             <a href="#contact" class="pill">Contact</a>
           </div>
           <div class="nav__actions" aria-label="Quick actions">
-            <button class="nav__icon" id="cmdkBtn" type="button" aria-haspopup="dialog" aria-controls="palette">
-              <span class="nav__iconText">⌘K</span>
-              <span class="nav__sr">Open command palette</span>
-            </button>
             <button class="nav__icon" id="themeBtn" type="button" aria-label="Toggle theme">
               <svg class="nav__svg" viewBox="0 0 24 24" aria-hidden="true">
                 <path
@@ -87,7 +83,7 @@
             <div class="rail__meter" aria-hidden="true">
               <div class="rail__meterBar" id="railMeter"></div>
             </div>
-            <div class="rail__hint">Tip: Press <span class="kbd">⌘</span><span class="kbd">K</span> to search.</div>
+            <div class="rail__hint">Tip: Use the theme toggle in the top bar.</div>
           </div>
         </div>
       </aside>
@@ -274,28 +270,6 @@
         </div>
       </div>
     </footer>
-
-    <div class="palette" id="palette" hidden>
-      <div class="palette__backdrop" id="paletteBackdrop" aria-hidden="true"></div>
-      <div class="palette__panel" role="dialog" aria-modal="true" aria-labelledby="paletteTitle">
-        <div class="palette__head">
-          <div class="palette__title" id="paletteTitle">Command Palette</div>
-          <div class="palette__hint">
-            <span class="kbd">Esc</span> to close · <span class="kbd">↑</span><span class="kbd">↓</span> to navigate ·
-            <span class="kbd">Enter</span> to open
-          </div>
-        </div>
-        <input
-          class="palette__input"
-          id="paletteInput"
-          type="search"
-          inputmode="search"
-          autocomplete="off"
-          placeholder="Search sections and links…"
-        />
-        <div class="palette__list" id="paletteList" role="listbox" aria-label="Results"></div>
-      </div>
-    </div>
 
     <noscript>
       <div class="noscript">
